@@ -82,13 +82,41 @@ suite.define(() => {
             );
           }
           expect(await list.getByRole("alert").filter({ hasText: message }).count()).toBe(1);
+          const originalAlert = await list
+            .getByRole("alert")
+            .filter({ hasText: message })
+            .elementHandle();
+          expect(originalAlert).not.toBeNull();
+          await search.fill("anthropic");
+          await expect.poll(() => page.locator(".provider-row[data-provider-id]").count()).toBe(1);
+          expect(await originalAlert?.evaluate((element) => element.isConnected)).toBe(true);
+          await search.fill("");
+          await expect.poll(() => page.locator(".provider-row[data-provider-id]").count()).toBe(2);
+          expect(await originalAlert?.evaluate((element) => element.isConnected)).toBe(true);
+
+          const waitingRead = await gateway.deferNext("models.authStatus");
           await gateway.setMethodResponse(method, response);
-          await page
-            .getByRole("button", {
-              name: method === "models.authStatus" ? "Retry" : "Refresh",
-              exact: true,
-            })
-            .click();
+          try {
+            await page
+              .getByRole("button", {
+                name: method === "models.authStatus" ? "Retry" : "Refresh",
+                exact: true,
+              })
+              .click();
+            await gateway.waitForRequest("models.authStatus", { after: waitingRead });
+            await expect
+              .poll(() => page.locator(".model-providers__refresh-button").isDisabled())
+              .toBe(true);
+            if (method === "models.authStatus") {
+              expect(
+                await page.getByRole("button", { name: "Retry", exact: true }).isDisabled(),
+              ).toBe(true);
+            }
+            expect(await list.getByRole("alert").count()).toBe(1);
+            expect(await originalAlert?.evaluate((element) => element.isConnected)).toBe(true);
+          } finally {
+            await gateway.resolveDeferred("models.authStatus", authStatus);
+          }
           await expect.poll(() => notice.count()).toBe(0);
           expect(await list.getByRole("alert").count()).toBe(0);
           expect((await gateway.getRequests("models.authSetApiKey")).length).toBe(0);
