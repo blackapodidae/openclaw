@@ -9,10 +9,18 @@ it("loads optional English copy at each view boundary while keeping shared label
   const { en, manager } = await loadI18n();
   const about = en.aboutPage;
   const dashboards = en.dashboardsPage;
+  const activityFeed = en.activityFeed;
   expect(manager.t("aboutPage.artifactDetails")).toBe("Control UI build details");
   expect(manager.t("aboutPage.copiedCommit")).toBe("Commit hash copied");
+  expect(manager.t("activityFeed.viewingNow")).toBe("Viewing now");
+  expect(manager.t("activityFeed.showing", { shown: "1", total: "2" })).toBe("Showing 1 of 2");
   await manager.setLocale("de");
   for (const { key, load, catalog } of [
+    {
+      key: "activityFeed.searchPlaceholder",
+      load: () => import("../pages/activity/activity-page-view.tsx"),
+      catalog: async () => (await import("./locales/en-activity.ts")).registerActivityEnglish.catalog,
+    },
     {
       key: "aboutPage.tagline",
       load: () => import("../pages/about/view.tsx"),
@@ -33,5 +41,6 @@ it("loads optional English copy at each view boundary while keeping shared label
     expect(manager.t("common.health")).toBe("Gesundheit");
     expect(en.aboutPage).toBe(about);
     expect(en.dashboardsPage).toBe(dashboards);
+    expect(en.activityFeed).toBe(activityFeed);
   }
 });
