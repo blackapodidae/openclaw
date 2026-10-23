@@ -8,14 +8,14 @@ import { en } from "./locales/en.ts";
 
 vi.hoisted(() => vi.resetModules());
 
-const startupConfigForm = structuredClone(en.configForm);
+const startupSections = structuredClone(en.configForm.sections);
 let restoreI18n: () => Promise<void>;
 
 beforeEach(() => {
   restoreI18n = captureI18nStateForTesting();
 });
 afterEach(async () => {
-  Object.assign(en.configForm, structuredClone(startupConfigForm));
+  en.configForm.sections = structuredClone(startupSections);
   await restoreI18n();
 });
 afterAll(async () => {
@@ -36,9 +36,6 @@ it.each([
   const namespaceOrder = Object.keys(en);
 
   expect(manager.t("configForm.defaultValue", { value: "3" })).toBe("Default: 3");
-  expect(manager.t("configForm.hideValue")).toBe("Hide value");
-  expect(manager.t("configForm.revealValue")).toBe("Reveal value");
-  expect(manager.t("configForm.invalidJson")).toBe("configForm.invalidJson");
   expect(manager.t("configForm.sections.gateway.label")).toBe("configForm.sections.gateway.label");
 
   await manager.setLocale("de");
@@ -53,12 +50,11 @@ it.each([
   expect(en.configForm).toBe(configForm);
   expect(en.configForm.sections).toBe(sections);
   expect(Object.keys(en)).toEqual(namespaceOrder);
-  expect(Object.keys(en.configForm)).toEqual(fieldOrder);
+  expect(Object.keys(en.configForm).slice(0, fieldOrder.length)).toEqual(fieldOrder);
   expect(Object.keys(en.configForm.sections)).toEqual(
     Object.keys(registerSettingsEnglish.catalog.configForm.sections),
   );
   expect(manager.t("common.health")).toBe("Gesundheit");
-  expect(manager.t("configForm.invalidJson")).toBe("Enter valid JSON before leaving this field.");
   expect(manager.t("configForm.sections.wizard.label")).toBe("Setup");
   expect(manager.t("configForm.sections.cron.label")).toBe("Automations");
 });

@@ -5,7 +5,6 @@ import * as agentEn from "./en-agents.ts";
 
 export const en: TranslationMap & {
   agentChip: TranslationMap;
-  activityFeed: TranslationMap;
   logbook: TranslationMap;
   gatewayLogs: TranslationMap;
   standingGrants: TranslationMap;
@@ -107,7 +106,15 @@ export const en: TranslationMap & {
       string
     >;
   dashboardsPage: TranslationMap;
-  configForm: TranslationMap & { sections: TranslationMap };
+  configForm: TranslationMap &
+    Record<"hideValue" | "revealValue" | "defaultValue", string> & { sections: TranslationMap };
+  quickSettings: TranslationMap & {
+    appearance: TranslationMap & Record<"lobsterVisits", string>;
+    personal: TranslationMap & Record<"browserOnly", string>;
+  };
+  activityFeed: TranslationMap & Record<"viewingNow" | "showing", string>;
+  terminal: TranslationMap &
+    Record<"title" | "open" | "toggle" | "unavailable" | "startCancelled", string>;
   configPage: TranslationMap;
   profilePage: TranslationMap & {
     personalInstructions: TranslationMap;
@@ -127,7 +134,22 @@ export const en: TranslationMap & {
   connection: TranslationMap;
   channels: TranslationMap;
   agents: TranslationMap & { overview: TranslationMap };
-  configView: TranslationMap;
+  configView: TranslationMap &
+    Record<
+      | "adminRequired"
+      | "recoveryNotRestored"
+      | "recoveryUnknown"
+      | "recoveryBackup"
+      | "discardUnconfirmed"
+      | "writeGatewayChanged"
+      | "writeUnconfirmed"
+      | "reloadBlocked"
+      | "rawDraftBlocksApply"
+      | "rawDraftBlocksFormEdit"
+      | "rawDraftUnverified"
+      | "fileOpenedOnGateway",
+      string
+    >;
   custodian: TranslationMap & { autoSetup: TranslationMap & { thisComputer: string } };
   debug: TranslationMap & {
     lanes: TranslationMap & Record<"lane" | "active" | "queued" | "blocked", string>;
@@ -170,7 +192,10 @@ export const en: TranslationMap & {
       string
     >;
   filePreview: TranslationMap;
-  updates: TranslationMap;
+  updates: TranslationMap &
+    Record<"confirm" | "dialog" | "triage" | "report", TranslationMap> & {
+      run: TranslationMap & Record<"restarting" | "progress", string> & { phase: TranslationMap };
+    };
   login: TranslationMap;
   labsPage: TranslationMap;
   mcpServers: TranslationMap;
@@ -582,15 +607,7 @@ export const en: TranslationMap & {
     holdOneHour: "Hold 1 h",
     reviewUpdate: "Review update",
     run: {
-      title: "Update progress",
-      phases: "Update phases",
-      steps: "Installation steps",
-      details: "Step details",
-      noDetails: "No step details recorded yet.",
-      verification: "Verification checks",
-      report: "Update report",
       restarting: "Gateway restarting…",
-      reconnecting: "Reconnecting automatically. Update progress is saved on the gateway.",
       progress: "{completed} of {total} phases complete",
       phase: {
         requested: "Requested",
@@ -601,26 +618,6 @@ export const en: TranslationMap & {
         restarting: "Restarting",
         verifying: "Verifying",
         finished: "Finished",
-      },
-      step: {
-        completed: "Complete",
-        in_progress: "In progress",
-        pending: "Pending",
-        failed: "Failed",
-        skipped: "Skipped",
-      },
-      oracle: {
-        service: "Service",
-        version: "Version",
-        plugins: "Plugins",
-        channels: "Channels",
-        inference: "Inference",
-      },
-      oracleState: {
-        pass: "Passed",
-        warn: "Not verified",
-        fail: "Failed",
-        pending: "Pending",
       },
     },
     confirm: {
@@ -922,122 +919,18 @@ export const en: TranslationMap & {
       delayP99: "Delay p99",
     },
   },
-  // Settings registers form copy; shared input and default labels stay eager.
   configForm: {
-    redactedPlaceholder: {},
-    sectionHelp: {},
-    advancedDivider: {},
-    advancedSettings: {},
     hideValue: "Hide value",
     revealValue: "Reveal value",
-    disableStreamToReveal: {},
-    storedSecretNotRevealable: {},
-    unsupportedType: {},
-    structuredSecretRaw: {},
-    structuredSecretFile: {},
     defaultValue: "Default: {value}",
-    select: {},
-    enumOn: {},
-    enumOff: {},
-    enumAuto: {},
-    nullValue: {},
-    jsonValue: {},
-    invalidJson: {},
-    invalidString: {},
-    invalidNumber: {},
-    draftRejected: {},
-    unsupportedArray: {},
-    itemCountOne: {},
-    itemCount: {},
-    add: {},
-    noItems: {},
-    removeItem: {},
-    customEntries: {},
-    addEntry: {},
-    key: {},
-    removeEntry: {},
-    removeEntryKey: {},
-    renameRedactedBlocked: {},
-    schemaUnavailable: {},
-    unsupportedSchema: {},
-    unsupportedNode: {},
-    noSettingsMatch: {},
-    noSettingsInSection: {},
     sections: {},
   },
   // Historical namespace from the pre-restructure "quick settings" page; its
   // keys now serve Models, Privacy & Security, Appearance, and Profile.
   // Renaming would force retranslation of every key, so the name stays.
   quickSettings: {
-    language: "Language",
-    model: {
-      title: "Model & Thinking",
-      model: "Model",
-      thinking: "Thinking",
-      fastMode: "Fast Mode",
-      default: "Default",
-      modelPolicy: "Model policy",
-      thinkingLevels: {
-        off: "Off",
-        low: "Low",
-        medium: "Medium",
-        high: "High",
-      },
-      fastModes: {
-        auto: "Auto",
-        fast: "Fast",
-        standard: "Standard",
-        on: "On",
-        off: "Off",
-      },
-    },
-    channels: {
-      title: "Channels",
-      connect: "Connect →",
-    },
     appearance: {
       lobsterVisits: "Lobster visits",
-      lobsterVisitsOn: "Drops by occasionally",
-      lobsterVisitsThemeHidden:
-        "The lobster stays home while the {theme} theme is active. Other visitors still drop by.",
-      lobsterVisitsOff: "Never visits",
-      lobsterSounds: "Lobster sounds",
-      lobsterSoundsOn: "Tiny blubs when touched",
-      lobsterSoundsOff: "Silent",
-      lobsterdex: "Lobsterdex",
-      lobsterdexSeen: "{seen}/{total} visited",
-      lobsterdexFirstVisited: "{name} · first visited {date}",
-      lobsterdexCardFirstVisited: "First visited {date}",
-      lobsterdexCardShinySeen: "✦ Shiny spotted {date}",
-      lobsterdexCardCopyLink: "Copy link",
-      lobsterdexOpen: "Open Lobsterdex",
-      lobsterdexThemeHidden:
-        "This theme hides Lobsterdex. Your collection and preferences are preserved.",
-    },
-    security: {
-      intro: "Review gateway access, tool policy, device authentication, and approvals.",
-      title: "Security",
-      gatewayAuth: "Gateway auth",
-      execPolicy: "Exec policy",
-      browserEnabled: "Browser enabled",
-      toolProfile: "Available tools",
-      toolProfileDefault:
-        "Using core and default plugin tools. Choose Full to include available optional plugin tools.",
-    },
-    system: {
-      gatewayHost: "Gateway Host",
-      up: "Up {duration}",
-      cpu: "CPU",
-      memory: "Memory",
-      disk: "Disk",
-      usage: "{label} usage",
-      loadAverage: "Load average: {values}",
-      core: "{count} core",
-      cores: "{count} cores",
-      load: "load",
-      used: "used",
-      freeOf: "{free} free of {total}",
-      runtime: "Node {version} · PID {pid}",
     },
     personal: {
       browserOnly: "Stored in this browser only.",
@@ -1046,77 +939,34 @@ export const en: TranslationMap & {
   configPage: {},
   configView: {
     adminRequired: "Configuration changes require operator.admin access.",
-    channelSettings: "Channel settings",
     categories: {},
     sections: {},
     themes: {},
     textSizes: {},
-    profileSyncedHint: "Saved to your profile — follows you on every device.",
-    syncedHint: "Synced across your devices through the gateway.",
-    syncPendingHint: "Waiting to sync through the gateway.",
     notifications: {},
     appearance: {},
     chatPrefs: {},
     sidebarPrefs: {},
     sessionObserver: {},
     connection: {},
-    root: "<root>",
-    itemCount: "[{count} item]",
-    itemCountPlural: "[{count} items]",
-    open: "Open",
     fileOpenedOnGateway: "Configuration file opened on Gateway host.",
-    applying: "Applying…",
-    autoSaveSaving: "Saving…",
-    autoSaveSaved: "Saved",
-    autoSavePaused: "Autosave paused after reconnect",
-    saveNow: "Save",
-    autoSaveFailed: "Save failed",
-    autoSaveRejected: "Settings not applied",
-    autoSaveRejectedHint: "Current settings are unchanged.",
-    rejectionDetails: "Show reason",
     recoveryNotRestored:
       "Settings could not be restored. Your draft is kept. Check {path} before saving again.",
     recoveryUnknown:
       "Settings restoration could not be confirmed. Your draft is kept. Check {path} before saving again.",
     recoveryBackup: "Inspect the recovery backup at {path}.",
-    recoveryReload: "Discard draft and reload",
     discardUnconfirmed:
       "The last save could not be confirmed. Your draft is kept. Reload configuration before discarding this setting.",
     writeGatewayChanged:
       "This unsettled change belongs to a different Gateway. Reconnect to that Gateway to retry, or discard the draft.",
     writeUnconfirmed:
       "The last configuration change could not be confirmed. Your draft is kept. Retry before changing other settings.",
-    autoSaveConflict: "Settings changed elsewhere",
-    retry: "Retry",
-    applyChanges: "Apply changes",
     reloadBlocked: "Finish saving or discard pending config changes before reloading.",
     rawDraftBlocksApply: "Save or discard edits in the Raw editor before applying changes.",
     rawDraftBlocksFormEdit:
       "Unsaved raw config edits could not be parsed; resolve them in the Raw editor before changing settings.",
     rawDraftUnverified:
       "Cannot verify the raw draft against the saved configuration; reload and retry.",
-    invalidConfig: "Your configuration is invalid. Some settings may not work as expected.",
-    dismissWarning: "Don't remind again",
-    viewPendingChangesRaw: "View pending changes",
-    hideEnvValues: "Hide env values",
-    revealEnvValues: "Reveal env values",
-    peek: "Peek",
-    loadingSchema: "Loading schema…",
-    formUnsafeCount: "1 setting in this config can only be edited as text: {paths}",
-    formUnsafeCountPlural: "{count} settings in this config can only be edited as text: {paths}",
-    formUnsafeMore: "+{count} more",
-    openRawEditor: "Open Raw editor",
-    secretCount: "{count} secret",
-    secretCountPlural: "{count} secrets",
-    redacted: "redacted",
-    visible: "visible",
-    revealSensitive: "Reveal sensitive values",
-    hideSensitive: "Hide sensitive values",
-    toggleRawRedaction: "Toggle raw config redaction",
-    sensitiveHidden:
-      "{count} sensitive value hidden. Use the reveal button above to edit the raw config.",
-    sensitiveHiddenPlural:
-      "{count} sensitive values hidden. Use the reveal button above to edit the raw config.",
   },
   execApproval: {
     watcherApprovalScope:
@@ -1234,59 +1084,10 @@ export const en: TranslationMap & {
   },
   terminal: {
     title: "Terminal",
-    availableSessions: "Available sessions",
-    inputLabel: "Terminal input",
-    sendInput: "Send terminal input",
-    closeSessionMessage: "Close this terminal session? Its running process will end.",
-    sessionsLabel: "Sessions",
-    addFilesLabel: "Add files",
-    copiedToClipboard: "Copied to clipboard",
     toggle: "Toggle terminal",
     open: "Open terminal",
-    openWindow: "Open terminal in new window",
-    hide: "Hide terminal",
-    resize: "Resize terminal panel",
-    newSession: "New terminal session",
-    addFiles: "Add files to terminal",
-    dropFiles: "Drop files to add them",
-    uploadProgress: "Uploading {current} of {total}",
-    uploadFailed: "Upload failed",
-    retryUpload: "Retry",
-    insertUploadedPaths: "Insert uploaded paths",
-    uploadExpired: "Uploaded files may have expired. Cancel this batch and choose the files again.",
-    closeSession: "Close terminal session",
-    sessions: "Terminal sessions",
-    refreshSessions: "Refresh",
-    loadingSessions: "Loading sessions…",
-    noSessions: "No live terminal sessions",
-    currentSession: "current",
-    sessionAttached: "attached",
-    attachSession: "Attach session",
-    attachFailed: "Could not attach terminal session",
-    deliveryFailed: "Terminal delivery could not be confirmed. Reconnect before trying again.",
-    inputPaused: "Terminal input is paused until the Gateway reconnects.",
     startCancelled: "Terminal start was cancelled. Try again.",
-    connecting: "Connecting to session…",
-    connectionTimedOut: "Session did not connect within 30 seconds.",
-    refreshRequired: "Control UI updated. Reload this page to continue the terminal action.",
-    tabLabel: "shell {n}",
-    tabHint: "{agent} · {cwd}",
-    agentOwnedBadge: "agent",
-    exited: "exited",
-    exitedCode: "exited ({code})",
-    exitedSignal: "exited (signal {signal})",
-    detached: "detached",
-    dockBottom: "Dock to bottom",
-    dockRight: "Dock to right",
-    dockMain: "Fill main content area",
-    dockMode: "Terminal panel position",
     unavailable: "The terminal is not available on this gateway.",
-    unusableSession:
-      "The Gateway returned an unusable terminal session (missing {field}). The Gateway is likely older than this Control UI — update it, then retry.",
-    uploadTooLarge: "File exceeds the 16 MiB terminal upload limit: {file}",
-    uploadUnsafeCmdPath: "Cannot safely insert an uploaded path containing % or ! into cmd.exe",
-    uploadUnsupportedShell: "Cannot safely insert an uploaded path into unsupported shell: {shell}",
-    uploadInvalidNativePath: "Cannot safely insert the uploaded native file path",
   },
   browser: {
     nativeTab: "App tab",
@@ -1676,52 +1477,9 @@ export const en: TranslationMap & {
       app: "App",
     },
   },
-  // Chat presence and debug counts stay eager; Activity registers the rest.
   activityFeed: {
-    partialHistory: {},
-    sessionsMode: {},
-    searchPlaceholder: {},
-    time: {},
-    time24h: {},
-    time7d: {},
-    time30d: {},
-    timeAll: {},
-    everyone: {},
-    peopleButtonLabel: {},
-    lastActive: {},
-    unresolvedIdentities: {},
-    clearPersonFilter: {},
     showing: "Showing {shown} of {total}",
-    today: {},
-    yesterday: {},
-    unknownDate: {},
-    noSessions: {},
-    automationGroup: {},
-    automation: {},
-    inspectRun: {},
-    recap: {},
-    recapMissing: {},
-    recapUpdating: {},
-    recapStale: {},
-    recapUnavailable: {},
-    recapRefreshFailed: {},
-    recapRetry: {},
-    recapUpdated: {},
-    backToSessions: {},
-    channelLabel: {},
-    agentLabel: {},
-    online: {},
-    idle: {},
-    offline: {},
-    unknownConnection: {},
-    connectionDetails: {},
-    connectionOne: {},
-    connectionMany: {},
-    lastInput: {},
     viewingNow: "Viewing now",
-    notViewing: {},
-    notFoundTitle: {},
-    notFoundDescription: {},
   },
   githubPublication: {
     newAction: "Choose a new publication",
