@@ -378,6 +378,42 @@ describe("ChatAudioPlayer", () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
+  it.each(["download", "expand", "outside"])(
+    "preserves %s focus when playback preparation fails",
+    async (target) => {
+      let respond!: (response: Response) => void;
+      vi.stubGlobal(
+        "fetch",
+        vi.fn(
+          () =>
+            new Promise<Response>((resolve) => {
+              respond = resolve;
+            }),
+        ),
+      );
+      const outside = document.createElement("button");
+      outside.textContent = "Outside player";
+      document.body.append(outside);
+      const player = await createPlayer("preparing-focus", {
+        playback: "transcode",
+        onExpand: vi.fn(),
+      });
+      await waitForSolid(() => expect(player.textContent).toContain("Preparing playback…"));
+      const focused =
+        target === "outside"
+          ? outside
+          : player.querySelector<HTMLElement>(`.chat-assistant-attachment-card__${target}`)!;
+      focused.focus();
+      expect(document.activeElement).toBe(focused);
+
+      respond(new Response(null, { status: 500 }));
+      await waitForSolid(() => expect(card(player, "--compact")).not.toBeNull());
+      expect(document.activeElement).toBe(
+        target === "outside" ? outside : player.querySelector("a[download]"),
+      );
+    },
+  );
+
   it("falls back to a normal attachment card after rendition retries are exhausted", async () => {
     vi.useFakeTimers();
     const fetchMock = vi.fn<typeof fetch>(async () => new Response(null, { status: 202 }));

@@ -122,9 +122,31 @@ function ChatAudioPlayerContent(
   }
   onSettled(() => {
     inputHandlers.set(host, handleInputsChanged);
+    const stopFocusRecovery = sourceState.subscribe(() => {
+      if (sourceController.readiness !== "unavailable") {
+        return;
+      }
+      const document = host.ownerDocument;
+      const focused = document.activeElement;
+      if (!host.contains(focused)) {
+        return;
+      }
+      // Media errors and failed preparation both replace the focused player.
+      onSettled(() => {
+        if (
+          host.isConnected &&
+          fallbackDownload?.isConnected &&
+          sourceController.readiness === "unavailable" &&
+          (document.activeElement === focused || document.activeElement === document.body)
+        ) {
+          fallbackDownload.focus({ preventScroll: true });
+        }
+      });
+    });
     syncSource();
     return () => {
       active = false;
+      stopFocusRecovery();
       inputHandlers.delete(host);
       sourceState.dispose();
       sourceController.cancel();
@@ -591,23 +613,7 @@ function ChatAudioPlayerContent(
             setState((draft) => Object.assign(draft, { playing: false }));
           }}
           onError={(event) => {
-            const document = host.ownerDocument;
-            const focused = document.activeElement;
-            const ownedFocus = host.contains(focused);
             if (!sourceController.handleError(event.currentTarget)) {
-              if (ownedFocus) {
-                // The failed player is replaced; wait for its useful fallback action to mount.
-                onSettled(() => {
-                  if (
-                    host.isConnected &&
-                    fallbackDownload?.isConnected &&
-                    sourceController.readiness === "unavailable" &&
-                    (document.activeElement === focused || document.activeElement === document.body)
-                  ) {
-                    fallbackDownload.focus({ preventScroll: true });
-                  }
-                });
-              }
               releaseChatAudioPlayback(event.currentTarget);
               setState((draft) => Object.assign(draft, { playing: false }));
             }
