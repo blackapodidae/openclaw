@@ -78,7 +78,9 @@ export abstract class ChatPaneSnapshotHydration extends ChatPaneReplyNavigation 
               await gateway.client.initialConnectSent;
             }
             // Keep the board's mount timing; split only cached rows after connect.
-            await new Promise<void>((resolve) => window.setTimeout(resolve, 0));
+            await new Promise<void>((resolve) => {
+              window.setTimeout(resolve, 0);
+            });
             if (!isCurrent()) {
               return hydration.complete?.();
             }

@@ -1,5 +1,6 @@
 /* @vitest-environment jsdom */
 
+import { expectDefined } from "@openclaw/normalization-core";
 import { IDBFactory } from "fake-indexeddb";
 import { createSignal, flush, Show } from "solid-js";
 import { describe, expect, it, vi } from "vitest";
@@ -118,7 +119,7 @@ describe("chat pane board loading states", () => {
         const reading = vi.spyOn(store, "read");
         pane.hydrateStoredChatSnapshot(pane.state, sessionKey);
         const hydration = chatHistoryRequests(pane.state).initialSnapshotHydration!;
-        await reading.mock.results[0].value;
+        await expectDefined(reading.mock.results[0], "snapshot read").value;
         expect(pane.state.chatMessages).toEqual(deferRows ? [] : messages);
         expect(provider.hasLoadedSnapshot).toBe(false);
         vi.useFakeTimers();
