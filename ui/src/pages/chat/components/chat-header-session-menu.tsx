@@ -128,11 +128,12 @@ function ChatHeaderSessionMenuShell(
   const mobile = () => props.mobile === true && Boolean(props.mobileHost) && !props.boardWidgetMenu;
   const focusReady = () => {
     const active = host.ownerDocument.activeElement;
+    // Reopening can remove the focused parked row while the trigger stays connected.
     if (
       menu?.overlay.open &&
       (active === openingFocus ||
         active === menu.overlay.surface ||
-        (active === host.ownerDocument.body && openingFocus && !openingFocus.isConnected))
+        active === host.ownerDocument.body)
     ) {
       const last = focusLast ? menu.itemElements().at(-1) : undefined;
       if (last) {
