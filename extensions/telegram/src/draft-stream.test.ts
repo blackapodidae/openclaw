@@ -353,9 +353,9 @@ describe("createTelegramDraftStream", () => {
     expect(stream.messageId()).toBe(17);
   });
 
-  it("recovers undelivered final text with a fresh send after the preview stops", async () => {
+  it("delivers the final text when the preview send fails permanently", async () => {
     const api = createMockDraftApi();
-    api.sendMessage.mockRejectedValueOnce(new Error("preview rejected"));
+    api.sendMessage.mockRejectedValueOnce(new Error("permanent network error"));
     const warn = vi.fn();
     const stream = createDraftStream(api, { warn });
 
